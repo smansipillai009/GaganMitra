@@ -1,0 +1,775 @@
+GAGANMITRA — EXECUTION PLAN
+Satellite Telemetry Anomaly Detection and Health-Monitoring Copilot
+Version: Phase 1 proposal + Phase 2 prototype plan
+Date: 14 September 2026
+
+======================================================================
+1. PROJECT DEFINITION
+======================================================================
+
+Working title:
+GaganMitra: Explainable AI Copilot for Spacecraft Telemetry Anomaly Detection
+and Health Monitoring
+
+One-line pitch:
+GaganMitra learns normal spacecraft telemetry, detects abnormal behaviour,
+explains the contributing signals, prioritises the event, and generates an
+operator-ready alert bundle.
+
+Core problem:
+Spacecraft produce continuous, multivariate, time-dependent telemetry. Fixed
+thresholds can miss gradual, correlated, contextual, and previously unseen
+anomalies. Supervised ML requires scarce labelled fault data, while complex
+models may be expensive or difficult to interpret. Operators need a system that
+reduces false alarms and converts anomaly scores into actionable evidence.
+
+Core solution:
+A lightweight, explainable health-monitoring pipeline combining:
+- Data-quality checks.
+- Temporal preprocessing.
+- Statistical and unsupervised baselines.
+- A temporal autoencoder or forecasting model.
+- Persistence and severity logic.
+- Contributing-channel analysis.
+- A mission-control-style dashboard.
+- Downloadable alert bundles.
+
+Important scope boundary:
+The initial project is anomaly detection and health monitoring. Do not claim
+full predictive maintenance, failure prediction, or remaining-useful-life
+estimation unless suitable degradation or failure-history data are available.
+
+======================================================================
+2. PROJECT GOALS
+======================================================================
+
+Primary goals:
+1. Build a reproducible spacecraft telemetry anomaly-detection pipeline.
+2. Benchmark at least two simple/unsupervised methods and one temporal model.
+3. Reduce false alerts using temporal persistence and event grouping.
+4. Show contributing telemetry channels for every detected event.
+5. Generate a structured alert bundle for operators.
+6. Evaluate model quality and deployment cost together.
+7. Keep ESA benchmark data, ISRO-domain data, and synthetic data separate.
+
+Secondary goals:
+1. Investigate a verified Indian payload/housekeeping dataset.
+2. Demonstrate controlled fault injection in a synthetic spacecraft simulator.
+3. Test whether the architecture transfers across datasets.
+4. Prepare a credible path toward edge or onboard deployment.
+
+Non-goals for the first version:
+- Automatic spacecraft commands.
+- Fully autonomous fault diagnosis.
+- Guaranteed physical root-cause identification.
+- True remaining-useful-life prediction.
+- A large Transformer or graph-neural-network system.
+- Production deployment on a real spacecraft.
+
+======================================================================
+3. DATA STRATEGY
+======================================================================
+
+Tier 1 — Primary benchmark:
+ESA-ADB spacecraft telemetry.
+Purpose:
+- Main quantitative model evaluation.
+- Use its labels and time-aware evaluation procedure where applicable.
+- Report precision, recall, F1, event-level performance, false alarms, and
+  detection delay.
+
+Tier 2 — Indian-domain experiment:
+One verified public ISRO payload or housekeeping source, investigated before
+implementation. Candidate order:
+1. Chandrayaan-3 APXS housekeeping data.
+2. Chandrayaan-2 XSM housekeeping data.
+3. AstroSat instrument housekeeping data.
+
+Purpose:
+- Test ingestion and transfer behaviour on Indian mission data.
+- Demonstrate domain relevance.
+- Report limitations honestly.
+
+Do not describe payload housekeeping as complete spacecraft-bus health
+telemetry unless the official documentation proves that it is.
+
+Tier 3 — Synthetic spacecraft telemetry:
+Build a small simulator with:
+- Power: battery voltage/current, bus voltage, solar-array current,
+  battery temperature.
+- Thermal: onboard-computer temperature, payload temperature, thermal proxy.
+- ADCS: reaction-wheel speed/current, attitude error, angular velocity.
+- Communications: transmitter temperature, RF power, link status.
+
+Inject labelled faults:
+- Sudden spike.
+- Sensor bias.
+- Gradual drift.
+- Stuck-at sensor.
+- Missing-data burst.
+- Increased noise.
+- Battery degradation.
+- Reaction-wheel degradation.
+- Communication dropout.
+- Cross-subsystem inconsistency.
+
+Purpose:
+- Known ground truth.
+- Fault-class testing.
+- Channel attribution testing.
+- Subsystem-localisation testing.
+- Detection-latency testing.
+
+Data-use rules:
+- Record source, licence, acknowledgement, and permitted use.
+- Do not claim that ESA-ADB is representative of ISRO by default.
+- Do not claim training on private or unreleased ISRO telemetry.
+- Do not reconstruct real launch telemetry from graphs and call it raw data.
+
+======================================================================
+4. SYSTEM ARCHITECTURE
+======================================================================
+
+Data sources
+    -> Data ingestion
+    -> Data-quality checks
+    -> Preprocessing and alignment
+    -> Temporal windowing
+    -> Detection models
+    -> Anomaly scores
+    -> Persistence and severity logic
+    -> Explainability and subsystem evidence
+    -> GaganMitra dashboard
+    -> Operator alert bundle
+
+Detailed components:
+
+A. Data ingestion:
+- Read CSV, Parquet, or mission-specific files.
+- Preserve timestamps, channel names, units, source, and mission metadata.
+- Convert each input to a common internal schema.
+
+B. Data-quality checks:
+- Missing values.
+- Duplicate timestamps.
+- Irregular sampling.
+- Invalid values.
+- Sensor dropouts.
+- Out-of-order records.
+- Data-quality report.
+
+C. Preprocessing:
+- Chronological sorting.
+- Resampling only when justified.
+- Short-gap treatment.
+- Missingness indicators.
+- Training-period normalization.
+- Sliding temporal windows.
+
+D. Detection layer:
+- Robust z-score/EWMA/fixed-rule baseline.
+- ECOD or Isolation Forest baseline.
+- LSTM or TCN autoencoder as main temporal model.
+- Optional forecasting residual or change-point detector.
+
+E. Decision layer:
+- Calibrated threshold.
+- Persistence check.
+- Hysteresis.
+- Event grouping.
+- Severity assignment.
+
+F. Explanation layer:
+- Channel-level reconstruction/prediction errors.
+- Contributing-channel ranking.
+- Subsystem mapping where metadata supports it.
+- Degradation trend.
+- Cautious fault hypothesis.
+
+G. Output layer:
+- Dashboard.
+- Active anomaly list.
+- Telemetry plots.
+- Severity and persistence.
+- Contributing channels.
+- Alert bundle in JSON/HTML/PDF.
+
+Safety boundary:
+GaganMitra is human-in-the-loop decision support. It must not issue spacecraft
+commands or present a model hypothesis as confirmed physical root cause.
+
+======================================================================
+5. RECOMMENDED TECH STACK
+======================================================================
+
+Language:
+- Python 3.11.
+
+Data and scientific computing:
+- pandas.
+- NumPy.
+- SciPy.
+- statsmodels, if required for time-series baselines.
+
+Machine learning:
+- scikit-learn.
+- PyOD for ECOD and related detectors.
+- PyTorch for LSTM/TCN autoencoders.
+
+Explainability:
+- Channel-level reconstruction error first.
+- SHAP only where technically appropriate and stable.
+- Do not call feature attribution confirmed root cause.
+
+Visualisation and UI:
+- Plotly.
+- Streamlit.
+
+Utilities:
+- PyYAML for configuration.
+- joblib for scalers and classical models.
+- tqdm for progress bars.
+- psutil for memory measurement.
+- pytest for basic tests.
+
+Storage:
+- CSV for initial inspection.
+- Parquet for larger processed data.
+- JSON for configuration, metrics, and alert bundles.
+
+Development:
+- Git and GitHub.
+- Python venv or Conda.
+- Optional Docker after the MVP works.
+
+Initial installation:
+pip install numpy pandas scipy scikit-learn pyod torch plotly streamlit pyyaml joblib tqdm psutil pytest
+
+Do not begin with FastAPI, React, Kubernetes, Transformers, GNNs, federated
+learning, or cloud deployment. Add them only after the core workflow works.
+
+======================================================================
+6. REPOSITORY STRUCTURE
+======================================================================
+
+gaganmitra/
+|
+|-- app.py
+|-- requirements.txt
+|-- README.md
+|-- configs/
+|   |-- config.yaml
+|   |-- channels.yaml
+|   |-- datasets.yaml
+|
+|-- data/
+|   |-- raw/
+|   |   |-- esa_adb/
+|   |   |-- isro_hk/
+|   |   |-- synthetic/
+|   |-- processed/
+|   |-- demo/
+|
+|-- models/
+|   |-- checkpoints/
+|   |-- scalers/
+|
+|-- notebooks/
+|   |-- 01_data_audit.ipynb
+|   |-- 02_baselines.ipynb
+|   |-- 03_temporal_model.ipynb
+|   |-- 04_evaluation.ipynb
+|
+|-- src/
+|   |-- data_loader.py
+|   |-- data_quality.py
+|   |-- preprocessing.py
+|   |-- windowing.py
+|   |-- simulator.py
+|   |-- baseline_detector.py
+|   |-- isolation_forest.py
+|   |-- lstm_autoencoder.py
+|   |-- train.py
+|   |-- detect.py
+|   |-- thresholding.py
+|   |-- severity.py
+|   |-- explainability.py
+|   |-- evaluation.py
+|   |-- alert_bundle.py
+|   |-- visualization.py
+|
+|-- outputs/
+|   |-- metrics/
+|   |-- plots/
+|   |-- alerts/
+|   |-- reports/
+|
+|-- tests/
+|   |-- test_preprocessing.py
+|   |-- test_windowing.py
+|   |-- test_scoring.py
+|   |-- test_alert_bundle.py
+
+======================================================================
+7. IMPLEMENTATION PHASES
+======================================================================
+
+PHASE 0 — Confirm scope and data
+Duration: 1–2 days before serious implementation.
+
+Tasks:
+- Confirm hackathon rules and final submission requirements.
+- Confirm whether team members and roles are fixed.
+- Download and inspect ESA-ADB.
+- Verify the dataset licence and citation requirements.
+- Investigate Chandrayaan-3 APXS first.
+- Record whether Indian data contain structured numeric time series.
+- Decide whether the ISRO experiment is feasible or stays as a proposal/future
+  extension.
+- Create the repository and README.
+
+Exit criteria:
+- ESA-ADB can be loaded.
+- At least one telemetry file is understood.
+- Dataset terms are recorded.
+- A first demo scenario is selected.
+
+PHASE 1 — Data audit and schema
+Duration: 1–2 days.
+
+Tasks:
+- Create a standard telemetry schema.
+- Inspect timestamps and sampling intervals.
+- Count channels and missing values.
+- Plot representative channels.
+- Identify normal and anomalous periods.
+- Document units and mission metadata.
+- Create a data-quality report.
+
+Deliverables:
+- data_audit.csv or JSON.
+- Channel summary table.
+- Missingness report.
+- Five representative plots.
+- Data dictionary.
+
+Exit criteria:
+- The team knows exactly what each selected input contains.
+- No model training begins before this report exists.
+
+PHASE 2 — Preprocessing pipeline
+Duration: 1–2 days.
+
+Tasks:
+- Sort by timestamp.
+- Handle duplicates.
+- Define resampling policy.
+- Handle short gaps.
+- Add missingness indicators.
+- Fit scalers only on training data.
+- Build sliding temporal windows.
+- Save preprocessing metadata.
+
+Deliverables:
+- preprocessing.py.
+- windowing.py.
+- Processed sample windows.
+- Unit tests for preprocessing.
+
+Exit criteria:
+- The same preprocessing can be applied during training and inference.
+- No future information leaks into training.
+
+PHASE 3 — Transparent baselines
+Duration: 1 day.
+
+Tasks:
+- Implement robust z-score detector.
+- Implement EWMA or rolling-deviation detector.
+- Implement ECOD or Isolation Forest.
+- Calibrate thresholds on validation data.
+- Generate anomaly scores.
+- Measure false alarms and detection delay.
+
+Deliverables:
+- baseline_detector.py.
+- isolation_forest.py.
+- Baseline comparison table.
+- Initial plots.
+
+Exit criteria:
+- At least one reliable baseline works end-to-end.
+- A fallback exists if deep learning fails.
+
+PHASE 4 — Temporal model
+Duration: 1–3 days.
+
+Tasks:
+- Implement a small LSTM autoencoder.
+- Train primarily on normal windows.
+- Calculate reconstruction error.
+- Generate channel-level error.
+- Calibrate the anomaly threshold.
+- Compare against baselines.
+- Measure runtime and memory.
+
+Suggested starting parameters:
+- Sequence length: 30–60 time steps.
+- One or two LSTM layers.
+- Hidden size: small enough for fast iteration.
+- Early stopping.
+- Fixed random seed.
+- Save scaler and model checkpoint.
+
+Exit criteria:
+- The temporal model runs reproducibly.
+- It improves a meaningful operational metric or offers a useful trade-off.
+- If it does not, the simpler baseline remains the final detector.
+
+PHASE 5 — Event logic and interpretation
+Duration: 1 day.
+
+Tasks:
+- Add persistence logic.
+- Add hysteresis.
+- Group nearby anomalous windows.
+- Assign severity.
+- Rank contributing channels.
+- Map channels to subsystems.
+- Add trend and context information.
+
+Deliverables:
+- One event object per detected event.
+- Severity rules.
+- Contributing-channel plots.
+- Subsystem hypothesis text.
+
+Exit criteria:
+- The system produces useful events instead of noisy point-level alerts.
+
+PHASE 6 — Alert bundle and dashboard
+Duration: 1–2 days.
+
+Dashboard pages:
+1. Mission overview.
+2. Telemetry replay.
+3. Active anomalies.
+4. Event details.
+5. Contributing channels.
+6. Model/evaluation metrics.
+7. Alert-bundle download.
+
+Alert bundle fields:
+- Event ID.
+- Dataset/mission ID.
+- Start and end time.
+- Anomaly score.
+- Severity.
+- Persistence duration.
+- Affected channels.
+- Contributing channels.
+- Possible subsystem.
+- Supporting plots.
+- Suggested investigation.
+- Model version.
+- Preprocessing version.
+- Data provenance.
+
+Exit criteria:
+- A judge can understand the system within 60 seconds.
+- A complete anomaly can be replayed from raw telemetry to report.
+
+PHASE 7 — Evaluation and robustness
+Duration: 1–2 days.
+
+Tasks:
+- Use chronological train/validation/test splits.
+- Compare all detectors.
+- Measure event-level metrics.
+- Test missing values.
+- Test sensor dropout.
+- Test gradual drift.
+- Test unseen synthetic faults.
+- Measure runtime and memory.
+- Check channel attribution on synthetic faults.
+
+Required result table:
+Model | Precision | Recall | F1 | Event F1 | False alarms/day |
+Detection delay | Runtime/window | Peak memory
+
+Exit criteria:
+- Every number in the presentation comes from the team’s own run.
+- Limitations are documented.
+
+PHASE 8 — Proposal, PPT, and demo preparation
+Duration: 1–2 days.
+
+PPT structure:
+1. Title and one-line pitch.
+2. Spacecraft telemetry problem.
+3. Key challenges and existing gaps.
+4. GaganMitra architecture.
+5. Why the solution is better.
+6. Data strategy and scientific honesty.
+7. Benefits, impact, and scalability.
+8. Evaluation plan and feasibility.
+9. Risks and mitigation.
+10. Roadmap.
+
+Demo script:
+1. Show a normal telemetry replay.
+2. Introduce an anomaly or select a benchmark event.
+3. Show the anomaly score rising.
+4. Show persistence turning the signal into one event.
+5. Display severity and contributing channels.
+6. Open the subsystem hypothesis.
+7. Generate the alert bundle.
+8. Show the evaluation and compute metrics.
+9. State the limitation and human-in-the-loop boundary.
+
+======================================================================
+8. 30-HOUR HACKATHON EXECUTION PLAN
+======================================================================
+
+Hour 0–2: Setup and decision
+- Clone repository.
+- Install environment.
+- Confirm data files.
+- Select one benchmark scenario.
+- Assign roles.
+- Define the minimum success condition.
+
+Hour 2–6: Data audit
+- Load data.
+- Check timestamps and channels.
+- Produce initial plots.
+- Select a manageable subset.
+- Save processed sample.
+
+Hour 6–10: Baseline
+- Implement robust statistical detector.
+- Implement ECOD or Isolation Forest.
+- Produce first anomaly events.
+- Save initial metrics.
+
+Hour 10–16: Temporal model
+- Train the LSTM autoencoder.
+- Calibrate the threshold.
+- Compare with baseline.
+- If unstable by hour 16, freeze the baseline and move forward.
+
+Hour 16–20: Operational layer
+- Add persistence.
+- Add severity.
+- Add contributing-channel ranking.
+- Add subsystem mapping.
+- Create alert JSON.
+
+Hour 20–25: Dashboard
+- Build Streamlit UI.
+- Add telemetry plots.
+- Add event table.
+- Add event detail panel.
+- Add alert download.
+
+Hour 25–28: Evaluation
+- Run final chronological test.
+- Measure F1, false alarms, detection delay, runtime, and memory.
+- Create final plots and comparison table.
+
+Hour 28–30: Pitch and reliability
+- Cache the demo outputs.
+- Rehearse the two-minute explanation.
+- Test on a second scenario.
+- Prepare screenshots and backup video.
+- Document limitations.
+
+Fallback rule:
+A reliable statistical/unsupervised detector plus a polished alert bundle is
+better than an unstable deep-learning model. The temporal model is optional;
+the operational workflow is mandatory.
+
+======================================================================
+9. TEAM ROLES
+======================================================================
+
+For a solo builder:
+- First: data audit and baseline.
+- Second: temporal model.
+- Third: dashboard and alert bundle.
+- Fourth: evaluation and pitch.
+
+For a two-person team:
+Person 1 — ML/data:
+- Data ingestion.
+- Preprocessing.
+- Baselines.
+- Temporal model.
+- Evaluation.
+
+Person 2 — product/operations:
+- Dashboard.
+- Alert bundle.
+- Synthetic simulator.
+- Documentation.
+- PPT and demo.
+
+For a three-person team:
+Person 1 — data and benchmark.
+Person 2 — ML and evaluation.
+Person 3 — dashboard, simulator, and presentation.
+
+======================================================================
+10. SUCCESS CRITERIA
+======================================================================
+
+Minimum viable success:
+- One public spacecraft telemetry dataset loads correctly.
+- One baseline detector produces anomaly events.
+- One temporal model is attempted or clearly justified as future work.
+- The dashboard displays telemetry and alerts.
+- Each alert includes severity and contributing channels.
+- An alert bundle can be downloaded.
+- Metrics are measured without fabricated values.
+- Chronological evaluation is used.
+- The system does not issue spacecraft commands.
+
+Strong success:
+- Temporal model improves event-level detection or detection delay.
+- False alarms are lower after persistence logic.
+- Synthetic faults are localized to the correct subsystem.
+- Indian payload/HK data can be ingested separately.
+- Runtime and memory are reported.
+- The demo runs from a clean environment.
+
+======================================================================
+11. RISKS AND MITIGATIONS
+======================================================================
+
+Risk: ESA-ADB is difficult to understand quickly.
+Mitigation: Start with one mission/file and reproduce the official loading path.
+
+Risk: Dataset labels do not match the selected model output.
+Mitigation: Define point-level and event-level evaluation before training.
+
+Risk: Too many false alarms.
+Mitigation: Persistence, hysteresis, validation-based thresholds, and event grouping.
+
+Risk: Deep model performs poorly.
+Mitigation: Keep the statistical or ECOD detector as the final fallback.
+
+Risk: Public ISRO data are not suitable.
+Mitigation: Keep ESA-ADB primary and use synthetic data for controlled testing.
+
+Risk: Payload HK is mistaken for bus telemetry.
+Mitigation: State the data category explicitly in the proposal and dashboard.
+
+Risk: SHAP explanations are unstable.
+Mitigation: Use channel reconstruction error and call outputs contributing evidence.
+
+Risk: No true predictive-maintenance labels.
+Mitigation: Use health monitoring and degradation-trend wording.
+
+Risk: Demo fails due to network or compute.
+Mitigation: Cache data, model outputs, plots, and alert bundles locally.
+
+Risk: Scope grows too large.
+Mitigation: Freeze features after the first working end-to-end pipeline.
+
+======================================================================
+12. RESEARCH AND DOCUMENTATION OUTPUTS
+======================================================================
+
+Maintain these files:
+
+1. data_sources.md
+- Dataset name.
+- Official URL.
+- Licence/terms.
+- Data category.
+- Available columns.
+- Sampling information.
+- Known limitations.
+
+2. data_dictionary.csv
+- Channel name.
+- Unit.
+- Subsystem.
+- Source.
+- Missingness.
+- Description.
+
+3. experiment_log.csv
+- Experiment ID.
+- Dataset/file.
+- Model.
+- Window size.
+- Threshold.
+- Random seed.
+- Metrics.
+- Runtime.
+- Memory.
+
+4. limitations.md
+- Dataset transfer limits.
+- Label limits.
+- Model limitations.
+- Explanation limitations.
+- Deployment limitations.
+
+5. citation_log.md
+- Claim.
+- Source.
+- Link/DOI.
+- Slide/proposal location.
+- Exact supporting passage.
+
+======================================================================
+13. FINAL PROPOSAL POSITIONING
+======================================================================
+
+Recommended proposal title:
+GaganMitra: Explainable AI Copilot for Spacecraft Telemetry Anomaly Detection
+and Health Monitoring
+
+Recommended positioning:
+GaganMitra is not presented as an ISRO-trained model because a public,
+ESA-ADB-equivalent ISRO spacecraft-health benchmark is not currently assumed.
+Instead, it provides a reproducible benchmark on ESA-ADB, a controlled
+engineering validation environment using synthetic spacecraft telemetry, and a
+separate transfer experiment on verified Indian payload or housekeeping data
+where permitted.
+
+Recommended innovation statement:
+The innovation is the integration of label-efficient temporal anomaly detection,
+false-alarm control, contributing-channel evidence, subsystem-level prioritisa-
+tion, alert-bundle generation, and compute-aware evaluation in one
+mission-operations workflow.
+
+Recommended impact statement:
+GaganMitra can help spacecraft operators detect abnormal behaviour earlier,
+reduce alert fatigue, investigate events faster, and scale health monitoring
+across growing satellite fleets while keeping humans in the decision loop.
+
+Recommended final sentence:
+GaganMitra transforms raw spacecraft telemetry into explainable, prioritised,
+and computationally practical health alerts.
+
+======================================================================
+14. IMMEDIATE NEXT ACTIONS
+======================================================================
+
+1. Create the GitHub repository.
+2. Download and inspect ESA-ADB.
+3. Complete the data-source and licence log.
+4. Investigate Chandrayaan-3 APXS files first.
+5. Build the data-audit notebook.
+6. Implement the statistical baseline.
+7. Create the first synthetic telemetry generator.
+8. Decide the exact demo scenario.
+9. Build the Streamlit skeleton.
+10. Start the experiment log before running models.
+11. Keep all claims and numbers traceable to a source or experiment.
+12. Freeze the MVP before adding advanced models.
+
+END OF EXECUTION PLAN
