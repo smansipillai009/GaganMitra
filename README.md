@@ -1,4 +1,4 @@
-# GaganMitra — Boilerplate (Day 1)
+# GaganMitra 
 
 Explainable spacecraft telemetry anomaly detection and health monitoring.
 
