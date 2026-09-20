@@ -1,0 +1,38 @@
+# ---- CORE (install now, Day 1) ----
+# Everything below this line is what you actually need to get the
+# boilerplate running end to end. Keep this list lean on purpose.
+
+numpy>=1.26
+pandas>=2.1
+scipy>=1.11
+scikit-learn>=1.4
+pyod>=1.1
+torch>=2.2
+plotly>=5.20
+streamlit>=1.38
+pyyaml>=6.0
+joblib>=1.3
+psutil>=5.9
+tqdm>=4.66
+pytest>=8.0
+matplotlib>=3.8
+
+# ---- OPTIONAL / LATER (do NOT install on Day 1) ----
+# Add these only if you actually reach the point of needing them, and only
+# one at a time, when a specific task calls for it. Installing all of this
+# up front is exactly the kind of infrastructure-first scope creep the
+# project's own "vibe coding rules" warn against.
+#
+# pydantic          # only if Role C's schema validation becomes unwieldy
+#                    # without it — plain dicts + a validation function are
+#                    # enough for a 2-mission demo.
+# pyarrow            # only if you actually need Parquet, not CSV.
+# duckdb             # only if you have more missions than pandas can hold
+#                    # comfortably in memory — unlikely for a hackathon demo.
+# pytorch-lightning  # only after a raw PyTorch training loop already works.
+# optuna             # only after you have a stable model worth tuning.
+# ruptures           # only if you actually build the optional change-point
+#                     detector — not required for the MVP.
+# onnxruntime        # deployment optimization — post-hackathon concern.
+# ruff
+# black
