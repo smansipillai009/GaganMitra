@@ -1,0 +1,41 @@
+# GaganMitra — main configuration
+# Everything that changes between runs lives here, not hardcoded in src/.
+
+project:
+  name: GaganMitra
+  version: 0.1.0-boilerplate
+
+# Which mission config to use by default when the app starts.
+default_mission: synthetic_demo_sat
+
+# Paths (relative to project root)
+paths:
+  data_raw: data/raw
+  data_processed: data/processed
+  data_demo: data/demo
+  models: models/checkpoints
+  scalers: models/scalers
+  outputs: outputs
+
+# Windowing defaults — used by src/windowing.py (Role A/B)
+windowing:
+  sequence_length: 50
+  stride: 1
+
+# Detection defaults — used by src/baseline_detector.py, thresholding.py (Role B)
+detection:
+  zscore_threshold: 3.0
+  min_persistence_seconds: 60
+  hysteresis_ratio: 0.8
+
+# Severity rule — DECIDE THIS EXPLICITLY, don't invent it live.
+# severity = f(score_above_threshold, persistence_duration, num_channels)
+# Fill in real weights once Role B has real score distributions to calibrate against.
+severity:
+  score_weight: 0.5
+  persistence_weight: 0.3
+  channel_count_weight: 0.2
+  thresholds:
+    low: 0.3
+    medium: 0.6
+    high: 0.85
