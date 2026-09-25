@@ -1,0 +1,65 @@
+# Mission config: synthetic_demo_sat
+# This is Scenario B from the 30-hour plan — the Indian-style synthetic
+# telemetry with known, labelled faults. This config is what Role C's
+# adapter reads to know how to map src/simulator.py's raw output columns
+# into the common schema.
+
+mission_id: synthetic_demo_sat
+display_name: "Synthetic Indian-Style Demo Satellite"
+source: synthetic
+
+channels:
+  battery_voltage:
+    source_name: BAT_V
+    unit: volts
+    subsystem: power
+    criticality: high
+
+  battery_current:
+    source_name: BAT_I
+    unit: amps
+    subsystem: power
+    criticality: high
+
+  battery_temperature:
+    source_name: BAT_TEMP
+    unit: celsius
+    subsystem: power
+    criticality: medium
+
+  bus_current:
+    source_name: BUS_I
+    unit: amps
+    subsystem: power
+    criticality: high
+
+  internal_temperature:
+    source_name: TEMP_INT
+    unit: celsius
+    subsystem: thermal
+    criticality: medium
+
+  reaction_wheel_rpm:
+    source_name: WHEEL_RPM
+    unit: rpm
+    subsystem: adcs
+    criticality: medium
+
+  attitude_error:
+    source_name: ATT_ERR
+    unit: degrees
+    subsystem: adcs
+    criticality: high
+
+  comms_temperature:
+    source_name: COMM_TEMP
+    unit: celsius
+    subsystem: comms
+    criticality: low
+
+# Optional: telecommand/mode signal, used by Role B's conditioned model
+# (per the "mode-awareness" requirement from the pitch deck) to tell the
+# difference between a real anomaly and a normal mode transition.
+mode_signal:
+  source_name: OP_MODE
+  values: [nominal, eclipse, safe_mode, maneuver]

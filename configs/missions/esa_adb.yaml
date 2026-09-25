@@ -1,0 +1,32 @@
+# Mission config: esa_adb
+# This is Scenario A from the 30-hour plan — the real public benchmark.
+#
+# IMPORTANT: the channel list below is a PLACEHOLDER. Do not trust these
+# exact source_name values yet — they need to be filled in for real once
+# Role A has actually loaded ESA-ADB and inspected its real column names
+# (this is Day 2's "common schema and data audit" checkpoint). Shipping this
+# file with guessed channel names and never correcting them is exactly the
+# kind of thing that breaks quietly during the 30-hour event — fix this
+# early, not under time pressure.
+
+mission_id: esa_adb
+display_name: "ESA Anomaly Detection Benchmark (real spacecraft telemetry)"
+source: esa_adb
+
+channels:
+  # TODO (Role A, Day 2): replace with real ESA-ADB channel names once the
+  # dataset is loaded. Keep the standardized names on the left unchanged if
+  # possible, so downstream code (models, dashboard) doesn't need to change
+  # when this file is filled in for real.
+  example_channel_1:
+    source_name: TBD_AFTER_DATA_AUDIT
+    unit: TBD
+    subsystem: TBD
+    criticality: medium
+
+mode_signal:
+  # ESA-ADB may or may not label operating mode per channel — confirm this
+  # during the Day 2 audit rather than assuming it matches the synthetic
+  # config's structure.
+  source_name: null
+  values: []
