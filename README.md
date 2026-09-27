@@ -1,4 +1,4 @@
-# GaganMitra — Boilerplate 
+# 🛰️ GaganMitra (गगनमित्र) -- Spacecraft-Health Monitoring & Decision-Support System **[Practice Model]** {Team Mavericks} — Boilerplate 
 
 Explainable spacecraft telemetry anomaly detection and health monitoring.
 
