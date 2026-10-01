@@ -1,0 +1,111 @@
+# REAL DATA, LIMITED METADATA:
+# The channel IDs (CADC08xx), durations, means/stds, and anomaly labels below
+# come from the real, public OPSSAT-AD benchmark (ESA OPS-SAT CubeSat) —
+# see data/real_esa_opssat/PROVENANCE.md for the exact source and what was
+# and wasn't downloadable in this environment. UNLIKE Mars-Express-style
+# mnemonics, ESA's OPSSAT-AD release does not publish plain-English
+# descriptions, physical units, or subsystem labels for these channel IDs
+# (they're anonymized ADCS/CADC housekeeping channels). "subsystem: unknown"
+# and "unit: unknown" below are honest placeholders, not filler — do not
+# invent a subsystem or unit for these on a slide. nominal_min/max are
+# derived here from the real per-segment mean +/- 3*std observed in the
+# fetched data (not an official ESA-published range).
+mission_id: "esa_adb"
+spacecraft_name: "ESA OPS-SAT / ESA-ADB-style benchmark"
+orbit_type: "Low Earth Orbit (CubeSat) / Areocentric (synthetic mode)"
+orbital_period_minutes: 95.0
+
+channels:
+  # --- Synthetic ESA-ADB-*style* channels used by `--source esa` (generate_esa_benchmark_dataset).
+  # NOT real ESA mnemonics — see src/adapters/esa_adb_adapter.py docstring.
+  NPWD2372:
+    standard_name: "battery_voltage"
+    subsystem: "power"
+    unit: "V"
+    nominal_min: 25.0
+    nominal_max: 34.0
+    criticality: "critical"
+    description: "Synthetic ESA-ADB-style Power Bus Voltage (NPWD2372) — fabricated, not real ESA data"
+
+  NPWD2451:
+    standard_name: "battery_current"
+    subsystem: "power"
+    unit: "A"
+    nominal_min: -15.0
+    nominal_max: 20.0
+    criticality: "high"
+    description: "Synthetic ESA-ADB-style Battery Current (NPWD2451) — fabricated, not real ESA data"
+
+  NTWD0005:
+    standard_name: "subsystem_temperature"
+    subsystem: "thermal"
+    unit: "degC"
+    nominal_min: -20.0
+    nominal_max: 45.0
+    criticality: "high"
+    description: "Synthetic ESA-ADB-style Thermal Sensor (NTWD0005) — fabricated, not real ESA data"
+
+  NAWD1020:
+    standard_name: "reaction_wheel_rpm"
+    subsystem: "aocs"
+    unit: "RPM"
+    nominal_min: -5000.0
+    nominal_max: 5000.0
+    criticality: "high"
+    description: "Synthetic ESA-ADB-style Reaction Wheel Speed (NAWD1020) — fabricated, not real ESA data"
+
+  NCWD0110:
+    standard_name: "rf_transmitter_power"
+    subsystem: "comms"
+    unit: "dBm"
+    nominal_min: 28.0
+    nominal_max: 38.0
+    criticality: "medium"
+    description: "Synthetic ESA-ADB-style RF Transmitter Output (NCWD0110) — fabricated, not real ESA data"
+
+  # --- Real OPSSAT-AD channels used by `--source esa-real` (load_real_opssat_segments).
+  # See data/real_esa_opssat/PROVENANCE.md.
+  CADC0872:
+    standard_name: "opssat_cadc_0872"
+    subsystem: "unknown"
+    unit: "unknown"
+    nominal_min: -0.0001
+    nominal_max: 0.0001
+    criticality: "high"
+    description: "Real OPSSAT-AD channel CADC0872 (ADCS/CADC housekeeping; no official unit/subsystem published)"
+
+  CADC0873:
+    standard_name: "opssat_cadc_0873"
+    subsystem: "unknown"
+    unit: "unknown"
+    nominal_min: -0.0001
+    nominal_max: 0.0001
+    criticality: "high"
+    description: "Real OPSSAT-AD channel CADC0873"
+
+  CADC0874:
+    standard_name: "opssat_cadc_0874"
+    subsystem: "unknown"
+    unit: "unknown"
+    nominal_min: -0.0001
+    nominal_max: 0.0001
+    criticality: "high"
+    description: "Real OPSSAT-AD channel CADC0874"
+
+  CADC0884:
+    standard_name: "opssat_cadc_0884"
+    subsystem: "unknown"
+    unit: "unknown"
+    nominal_min: -1.0
+    nominal_max: 1.5
+    criticality: "medium"
+    description: "Real OPSSAT-AD channel CADC0884"
+
+  CADC0892:
+    standard_name: "opssat_cadc_0892"
+    subsystem: "unknown"
+    unit: "unknown"
+    nominal_min: -1.1
+    nominal_max: 1.7
+    criticality: "medium"
+    description: "Real OPSSAT-AD channel CADC0892"

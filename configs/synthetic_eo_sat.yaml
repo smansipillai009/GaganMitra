@@ -1,0 +1,127 @@
+mission_id: "synthetic_eo_sat"
+spacecraft_name: "GaganMitra-EOS1"
+orbit_type: "Sun-Synchronous LEO (600 km)"
+orbital_period_minutes: 96.0
+eclipse_duration_minutes: 35.0
+
+channels:
+  # POWER (EPS)
+  EPS_BATT_V:
+    standard_name: "battery_voltage"
+    subsystem: "power"
+    unit: "V"
+    nominal_min: 24.0
+    nominal_max: 33.6
+    criticality: "critical"
+    description: "Main 8S Li-ion Battery Terminal Voltage"
+
+  EPS_BATT_I:
+    standard_name: "battery_current"
+    subsystem: "power"
+    unit: "A"
+    nominal_min: -8.0
+    nominal_max: 12.0
+    criticality: "high"
+    description: "Battery Net Current (+ = discharge, - = charge)"
+
+  EPS_SOLAR_I:
+    standard_name: "solar_array_current"
+    subsystem: "power"
+    unit: "A"
+    nominal_min: 0.0
+    nominal_max: 15.0
+    criticality: "high"
+    description: "Combined Solar Array Photovoltaic Current"
+
+  EPS_BUS_V:
+    standard_name: "regulated_bus_voltage"
+    subsystem: "power"
+    unit: "V"
+    nominal_min: 27.8
+    nominal_max: 28.4
+    criticality: "critical"
+    description: "Main Regulated Avionics 28V Power Bus"
+
+  # THERMAL (TCS)
+  TCS_BATT_TEMP:
+    standard_name: "battery_temperature"
+    subsystem: "thermal"
+    unit: "degC"
+    nominal_min: 5.0
+    nominal_max: 35.0
+    criticality: "high"
+    description: "Battery Module Core Temperature"
+
+  TCS_PAYLOAD_TEMP:
+    standard_name: "payload_optical_bench_temp"
+    subsystem: "thermal"
+    unit: "degC"
+    nominal_min: 15.0
+    nominal_max: 25.0
+    criticality: "medium"
+    description: "High-Resolution Optical Imaging Bench Temperature"
+
+  TCS_RADIATOR_TEMP:
+    standard_name: "radiator_panel_temp"
+    subsystem: "thermal"
+    unit: "degC"
+    nominal_min: -40.0
+    nominal_max: 50.0
+    criticality: "medium"
+    description: "Deep Space Passive Radiator Surface Temperature"
+
+  # ATTITUDE & ORBIT CONTROL (AOCS)
+  AOCS_WHEEL_RPM:
+    standard_name: "reaction_wheel_rpm"
+    subsystem: "aocs"
+    unit: "RPM"
+    nominal_min: -4500.0
+    nominal_max: 4500.0
+    criticality: "high"
+    description: "Primary Pitch Reaction Wheel Angular Speed"
+
+  AOCS_GYRO_RATE:
+    standard_name: "body_angular_rate"
+    subsystem: "aocs"
+    unit: "deg/s"
+    nominal_min: -0.1
+    nominal_max: 0.1
+    criticality: "critical"
+    description: "Fibre-Optic Gyro Angular Rate (Pitch Axis)"
+
+  AOCS_ATT_ERROR:
+    standard_name: "attitude_pointing_error"
+    subsystem: "aocs"
+    unit: "arcsec"
+    nominal_min: 0.0
+    nominal_max: 30.0
+    criticality: "high"
+    description: "Star Tracker Cross-Boresight Pointing Error"
+
+  # TELEMETRY, TRACKING & COMMAND (TTC / COMMS)
+  TTC_TX_POWER:
+    standard_name: "rf_transmitter_power"
+    subsystem: "comms"
+    unit: "dBm"
+    nominal_min: 30.0
+    nominal_max: 36.0
+    criticality: "high"
+    description: "X-Band Science Downlink Transmitter Output Power"
+
+  TTC_SNR:
+    standard_name: "ground_uplink_snr"
+    subsystem: "comms"
+    unit: "dB"
+    nominal_min: 12.0
+    nominal_max: 28.0
+    criticality: "medium"
+    description: "S-Band Ground Command Receiver SNR"
+
+  TTC_BER:
+    standard_name: "bit_error_rate_log10"
+    subsystem: "comms"
+    unit: "log10"
+    nominal_min: -8.0
+    nominal_max: -5.0
+    criticality: "medium"
+    description: "Downlink Telemetry Frame Bit Error Rate"
